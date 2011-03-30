@@ -100,24 +100,21 @@ module Encre
     end
 
     # file upload, should be in different class File
-    def file_upload(file)
+    def file_upload(file, meeting)
       file["//"] = "/"
       file = ENV['RED5_HOME'] + "/webapps/encrev1/#{file}"
-      request_url = "#{@url}/file/demo"
+      file = File.new(file)
+      $log.info "File to upload : [#{file.path}]"
+      request_url = "#{@url}/file/#{meeting}"
       request_url += "?uid=#{@conf.uid}&sid=#{@conf.sid}"
       $log.info "Request filename : #{request_url}"
-      response = RestClient.put request_url, ""
-      $log.info "--> Got reponse : #{respone}"
+      response = RestClient.post(request_url, {:upload => file})
+      # response = RestClient.post request_url, ""
+      $log.info "--> Got reponse : #{response}"
       file_name = JSON.parse(response.to_str)['result']
       if file_name
         $log.info "--> Got filename : #{file_name}"
-        request_url = "#{@url}/file/demo/"
-        request_url += file_name
-        request_url += "?uid=#{@conf.uid}&sid=#{@conf.sid}"
-        $log.info "Upload (#{file}) to Encre : #{request_url}"
-        response = RestClient.put request_url, File.read(file), :content_type => 'application/x-shockwave-flash'
-        $log.info "Delete #{file} ..."
-        file = File.delete(file)
+        request_url = "#{@url}/file/#{meeting}"
       else
         file_name = nil
       end

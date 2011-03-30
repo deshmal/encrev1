@@ -198,8 +198,8 @@ class Application < Red5::MultiThreadedApplicationAdapter
     @encre.event.stream_stopped(stream)
 
     if stream.get_save_filename
-      $log.info "Stream file name : (#{stream.get_save_filename})"
-      @encre.event.file_upload(stream.get_save_filename)
+      $log.info "Stream file name: (#{stream.get_save_filename}) on scope (#{stream.get_scope.get_name})"
+      @encre.event.file_upload(stream.get_save_filename, stream.get_scope.get_name)
     end
   end
 
